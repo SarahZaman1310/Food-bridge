@@ -1,0 +1,35 @@
+.home-page {
+  min-height: 100vh;
+  background: white;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 80px;
+}
+
+.home-page h1 {
+  margin: 0;
+
+  font-size: 32px;
+  font-weight: 700;
+  color: #111;
+}
+
+.login-button {
+  padding: 12px 24px;
+
+  background: #111;
+  color: white;
+
+  border-radius: 6px;
+
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.login-button:hover {
+  opacity: 0.85;
+}
