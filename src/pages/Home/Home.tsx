@@ -161,7 +161,7 @@ const roles = [
         "Donors",
         "List safe surplus food and make it available to organisations supporting local communities.",
         "Donate food",
-        "/login",
+        "/donate",
         "https://images.unsplash.com/photo-1593113598332-cd288d649433?auto=format&fit=crop&w=1000&q=85",
         "Volunteers organising donated food in boxes",
     ],
@@ -298,9 +298,9 @@ function Home() {
                             How it works
                         </a>
 
-                        <Link to="/login" onClick={closeMenu}>
-                            Donate food
-                        </Link>
+                        <Link to="/donate" onClick={closeMenu}>
+    Donate food
+</Link>
 
                         <Link to="/login" onClick={closeMenu}>
                             Request food
@@ -348,8 +348,8 @@ function Home() {
                         </p>
 
                         <div className="button-row">
-                            <Link className="button" to="/login">
-                                Donar
+                            <Link className="button" to="/donate">
+    Donor
                                 <Icon name="arrow" size={18} />
                             </Link>
 
@@ -497,8 +497,8 @@ function Home() {
                             organisations supporting people in the community.
                         </p>
 
-                        <Link className="button" to="/login">
-                            Share surplus food
+                        <Link className="button" to="/donate">
+    Share surplus food
                             <Icon name="arrow" size={18} />
                         </Link>
                     </div>
@@ -681,8 +681,8 @@ function Home() {
                     </div>
 
                     <div className="cta-actions">
-                        <Link className="button button-light" to="/login">
-                            Donate food
+                        <Link className="button button-light" to="/donate">
+    Donate food
                             <Icon name="arrow" size={18} />
                         </Link>
 
@@ -724,7 +724,7 @@ function Home() {
                     <FooterLinks
                         title="Platform"
                         links={[
-                            ["Donate food", "/login"],
+                            ["Donate food", "/donate"],
                             ["Request food", "/login"],
                             ["Volunteer", "#volunteer"],
                         ]}
