@@ -1,4 +1,4 @@
-import { useState, type ChangeEvent, type FormEvent } from "react";
+import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import { Link } from "react-router-dom";
 import "./DonationPage.css";
 
@@ -84,6 +84,43 @@ function DonationPage() {
   const [form, setForm] = useState<DonationForm>(initialState);
   const [donations, setDonations] = useState<Donation[]>([]);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  useEffect(() => {
+  const loadDonations = async () => {
+    try {
+      const response = await fetch(
+        "http://127.0.0.1:8000/api/food-donations"
+      );
+
+      const result = await response.json();
+
+      if (response.ok) {
+        const loadedDonations = result.data.map((donation: any) => ({
+          id: donation.id.toString(),
+
+          foodName: donation.food_name,
+          foodCategory: donation.food_category,
+          quantity: donation.quantity.toString(),
+          unit: donation.unit,
+          expiryAt: donation.expiry_at,
+
+          donorName: donation.donor?.name || "Unknown",
+          donorType: donation.donor?.donor_type || "Unknown",
+          email: donation.donor?.email || "",
+          phone: donation.donor?.phone || "",
+          address: donation.donor?.address || "",
+
+          confirmation: true,
+        }));
+
+        setDonations(loadedDonations);
+      }
+    } catch {
+      setSuccessMessage("Cannot load donations from backend.");
+    }
+  };
+
+  loadDonations();
+}, []);
 
   const isReady =
     form.donorName.trim() !== "" &&
@@ -113,32 +150,82 @@ function DonationPage() {
     }
   };
 
-  const handleSubmit = (event: FormEvent) => {
-    event.preventDefault();
+  const handleSubmit = async (event: FormEvent) => {
+  event.preventDefault();
 
-    if (!isReady) {
-      return;
-    }
+  if (!isReady) {
+    return;
+  }
 
-    const newDonation: Donation = {
-      ...form,
-      id: createTemporaryId(),
-    };
+  try {
+    const response = await fetch(
+      "http://127.0.0.1:8000/api/food-donations",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          donor_id: 1,
+          food_name: form.foodName,
+          food_category: form.foodCategory,
+          quantity: Number(form.quantity),
+          unit: form.unit,
+          expiry_at: form.expiryAt,
+        }),
+      },
+    );
 
-    setDonations((previous) => [newDonation, ...previous]);
-    setForm(initialState);
-    setSuccessMessage("Donation added successfully.");
+    const result = await response.json();
+
+    if (response.ok) {
+  const newDonation: Donation = {
+    ...form,
+    id: result.data.id.toString(),
   };
 
-  const handleDelete = (id: string) => {
-    const shouldDelete = window.confirm("Are you sure you want to delete this donation?");
+  setDonations((previous) => [newDonation, ...previous]);
 
-    if (!shouldDelete) {
-      return;
+  setSuccessMessage("Donation added successfully.");
+  setForm(initialState);
+}else {
+      setSuccessMessage(result.message || "Failed to add donation.");
     }
+  } catch {
+    setSuccessMessage("Cannot connect to backend.");
+  }
+};
 
-    setDonations((previous) => previous.filter((donation) => donation.id !== id));
-  };
+  const handleDelete = async (id: string) => {
+  const shouldDelete = window.confirm(
+    "Are you sure you want to delete this donation?"
+  );
+
+  if (!shouldDelete) {
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      `http://127.0.0.1:8000/api/food-donations/${id}`,
+      {
+        method: "DELETE",
+      }
+    );
+
+    if (response.ok) {
+      setDonations((previous) =>
+        previous.filter((donation) => donation.id !== id)
+      );
+
+      setSuccessMessage("Donation deleted successfully.");
+    } else {
+      setSuccessMessage("Failed to delete donation.");
+    }
+  } catch {
+    setSuccessMessage("Cannot connect to backend.");
+  }
+};
 
   return (
     <div className="donation-page">
