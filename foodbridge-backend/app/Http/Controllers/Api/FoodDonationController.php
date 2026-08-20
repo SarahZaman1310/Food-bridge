@@ -9,24 +9,62 @@ use Illuminate\Http\Request;
 class FoodDonationController extends Controller
 {
     // GET: /api/food-donations
-    public function index()
+    // Only show donations belonging to the logged-in donor
+    public function index(Request $request)
     {
+        $user = $request->user();
+
+        if (!$user || $user->role !== 'donor') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Only donors can view donations.',
+            ], 403);
+        }
+
+        $donor = $user->donor;
+
+        if (!$donor) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Donor profile not found.',
+            ], 404);
+        }
+
         $donations = FoodDonation::with('donor')
+            ->where('donor_id', $donor->id)
             ->latest()
             ->get();
 
         return response()->json([
             'success' => true,
-            'message' => 'Food donations retrieved successfully',
-            'data' => $donations
+            'message' => 'Your food donations retrieved successfully',
+            'data' => $donations,
         ]);
     }
+
 
     // POST: /api/food-donations
     public function store(Request $request)
     {
+        $user = $request->user();
+
+        if (!$user || $user->role !== 'donor') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Only donors can create food donations.',
+            ], 403);
+        }
+
+        $donor = $user->donor;
+
+        if (!$donor) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Donor profile not found.',
+            ], 404);
+        }
+
         $validated = $request->validate([
-            'donor_id' => 'required|exists:donors,id',
             'food_name' => 'required|string|max:255',
             'food_category' => 'required|string|max:255',
             'quantity' => 'required|numeric|min:0.01',
@@ -37,36 +75,79 @@ class FoodDonationController extends Controller
             'donation_status' => 'sometimes|string|max:100',
         ]);
 
+        // Automatically assign the logged-in user's donor ID
+        $validated['donor_id'] = $donor->id;
+
         $donation = FoodDonation::create($validated);
 
         return response()->json([
             'success' => true,
             'message' => 'Food donation created successfully',
-            'data' => $donation->load('donor')
+            'data' => $donation->load('donor'),
         ], 201);
     }
 
+
     // GET: /api/food-donations/{id}
-    public function show(string $id)
+    public function show(Request $request, string $id)
     {
+        $user = $request->user();
+
+        if (!$user || $user->role !== 'donor') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Only donors can view donations.',
+            ], 403);
+        }
+
+        $donor = $user->donor;
+
+        if (!$donor) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Donor profile not found.',
+            ], 404);
+        }
+
         $donation = FoodDonation::with([
             'donor',
-            'foodRequests'
-        ])->findOrFail($id);
+            'foodRequests',
+        ])
+            ->where('donor_id', $donor->id)
+            ->findOrFail($id);
 
         return response()->json([
             'success' => true,
-            'data' => $donation
+            'data' => $donation,
         ]);
     }
+
 
     // PUT/PATCH: /api/food-donations/{id}
     public function update(Request $request, string $id)
     {
-        $donation = FoodDonation::findOrFail($id);
+        $user = $request->user();
+
+        if (!$user || $user->role !== 'donor') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Only donors can update donations.',
+            ], 403);
+        }
+
+        $donor = $user->donor;
+
+        if (!$donor) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Donor profile not found.',
+            ], 404);
+        }
+
+        $donation = FoodDonation::where('donor_id', $donor->id)
+            ->findOrFail($id);
 
         $validated = $request->validate([
-            'donor_id' => 'sometimes|required|exists:donors,id',
             'food_name' => 'sometimes|required|string|max:255',
             'food_category' => 'sometimes|required|string|max:255',
             'quantity' => 'sometimes|required|numeric|min:0.01',
@@ -82,20 +163,40 @@ class FoodDonationController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Food donation updated successfully',
-            'data' => $donation->load('donor')
+            'data' => $donation->load('donor'),
         ]);
     }
 
+
     // DELETE: /api/food-donations/{id}
-    public function destroy(string $id)
+    public function destroy(Request $request, string $id)
     {
-        $donation = FoodDonation::findOrFail($id);
+        $user = $request->user();
+
+        if (!$user || $user->role !== 'donor') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Only donors can delete donations.',
+            ], 403);
+        }
+
+        $donor = $user->donor;
+
+        if (!$donor) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Donor profile not found.',
+            ], 404);
+        }
+
+        $donation = FoodDonation::where('donor_id', $donor->id)
+            ->findOrFail($id);
 
         $donation->delete();
 
         return response()->json([
             'success' => true,
-            'message' => 'Food donation deleted successfully'
+            'message' => 'Food donation deleted successfully',
         ]);
     }
 }

@@ -87,9 +87,17 @@ function DonationPage() {
   useEffect(() => {
   const loadDonations = async () => {
     try {
-      const response = await fetch(
-        "http://127.0.0.1:8000/api/food-donations"
-      );
+      const token = localStorage.getItem("auth_token");
+
+const response = await fetch(
+  "http://127.0.0.1:8000/api/food-donations",
+  {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: "application/json",
+    },
+  }
+);
 
       const result = await response.json();
 
@@ -159,14 +167,15 @@ function DonationPage() {
 
   try {
     const response = await fetch(
-      "http://127.0.0.1:8000/api/food-donations",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+  "http://127.0.0.1:8000/api/food-donations",
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+    },
         body: JSON.stringify({
-          donor_id: 1,
           food_name: form.foodName,
           food_category: form.foodCategory,
           quantity: Number(form.quantity),
@@ -196,7 +205,7 @@ function DonationPage() {
   }
 };
 
-  const handleDelete = async (id: string) => {
+ const handleDelete = async (id: string) => {
   const shouldDelete = window.confirm(
     "Are you sure you want to delete this donation?"
   );
@@ -210,6 +219,10 @@ function DonationPage() {
       `http://127.0.0.1:8000/api/food-donations/${id}`,
       {
         method: "DELETE",
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+        },
       }
     );
 
