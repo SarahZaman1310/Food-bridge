@@ -299,11 +299,11 @@ function Home() {
                         </a>
 
                         <Link to="/donate" onClick={closeMenu}>
-    Donate food
-</Link>
+                            Donate Food
+                        </Link>
 
                         <Link to="/login" onClick={closeMenu}>
-                            Request food
+                            Recipient
                         </Link>
 
                         <a href="#volunteer" onClick={closeMenu}>
@@ -349,7 +349,7 @@ function Home() {
 
                         <div className="button-row">
                             <Link className="button" to="/donate">
-    Donor
+                            Donate Food
                                 <Icon name="arrow" size={18} />
                             </Link>
 
@@ -498,7 +498,7 @@ function Home() {
                         </p>
 
                         <Link className="button" to="/donate">
-    Share surplus food
+                            Share surplus food
                             <Icon name="arrow" size={18} />
                         </Link>
                     </div>
@@ -682,7 +682,7 @@ function Home() {
 
                     <div className="cta-actions">
                         <Link className="button button-light" to="/donate">
-    Donate food
+                            Donate food
                             <Icon name="arrow" size={18} />
                         </Link>
 
@@ -690,7 +690,7 @@ function Home() {
                             className="button button-ghost"
                             to="/login"
                         >
-                            Request food
+                            Recipient
                         </Link>
 
                         <a href="#volunteer">Volunteer with us</a>
