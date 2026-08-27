@@ -72,10 +72,11 @@ function Signup() {
       // Save selected role for frontend use
       localStorage.setItem("user_role", role);
 
-      // Phone is currently only collected by the UI.
-      // Backend registration does not currently save it.
-
-      navigate("/donor");
+      if (data.user.role === "volunteer") {
+        navigate("/volunteer", { replace: true });
+      } else {
+        navigate("/donor");
+      }
     } catch (error) {
       console.error("Signup error:", error);
       setError(

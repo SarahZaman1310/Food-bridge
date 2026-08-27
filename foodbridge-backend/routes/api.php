@@ -28,6 +28,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/logout', [AuthController::class, 'logout']);
 
+    Route::get('/volunteer/profile', [VolunteerController::class, 'profile']);
+    Route::put('/volunteer/profile', [VolunteerController::class, 'updateProfile']);
+    Route::get('/volunteer/deliveries', [VolunteerController::class, 'assignedDeliveries']);
+
     Route::apiResource('donors', DonorController::class);
     Route::apiResource('food-donations', FoodDonationController::class);
     Route::apiResource('ngos', NgoController::class);

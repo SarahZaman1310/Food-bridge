@@ -43,13 +43,6 @@ const foodCategories = [
 
 const quantityUnits = ["portions", "kg", "boxes", "packs", "items"];
 
-const createTemporaryId = () => {
-  if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
-    return crypto.randomUUID();
-  }
-
-  return `donation-${Date.now()}-${Math.random().toString(16).slice(2)}`;
-};
 
 const formatExpiry = (value: string) => {
   if (!value) return "Not provided";

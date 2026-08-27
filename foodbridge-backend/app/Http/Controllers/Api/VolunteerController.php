@@ -5,13 +5,81 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Volunteer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 class VolunteerController extends Controller
 {
+    public function profile(Request $request)
+    {
+        $volunteer = $this->authenticatedVolunteer($request);
+
+        return response()->json([
+            'success' => true,
+            'data' => $this->profileData($volunteer),
+        ]);
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $volunteer = $this->authenticatedVolunteer($request);
+        $user = $request->user();
+
+        $validated = $request->validate([
+            'full_name' => 'required|string|max:255',
+            'email' => [
+                'required',
+                'email',
+                Rule::unique('users', 'email')->ignore($user->id),
+                Rule::unique('volunteers', 'email')->ignore($volunteer->id),
+            ],
+            'phone' => [
+                'required',
+                'string',
+                'max:30',
+                Rule::unique('volunteers', 'phone')->ignore($volunteer->id),
+            ],
+            'availability_status' => ['required', Rule::in(['Available', 'Busy', 'Offline'])],
+            'vehicle_type' => ['required', Rule::in(['None', 'Bicycle', 'Motorcycle', 'Car', 'Van'])],
+        ]);
+
+        DB::transaction(function () use ($user, $volunteer, $validated) {
+            $user->update([
+                'name' => $validated['full_name'],
+                'email' => $validated['email'],
+                'phone' => $validated['phone'],
+            ]);
+
+            $volunteer->update($validated);
+        });
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Volunteer profile updated successfully',
+            'data' => $this->profileData($volunteer->fresh()),
+            'user' => $user->fresh(),
+        ]);
+    }
+
+    public function assignedDeliveries(Request $request)
+    {
+        $volunteer = $this->authenticatedVolunteer($request);
+
+        return response()->json([
+            'success' => true,
+            'data' => $volunteer->deliveries()
+                ->with('foodRequest')
+                ->latest()
+                ->get(),
+        ]);
+    }
+
     // GET: /api/volunteers
     public function index()
     {
-        $volunteers = Volunteer::latest()->get();
+        $volunteers = Volunteer::orderBy('id')
+            ->get()
+            ->map(fn (Volunteer $volunteer) => $this->profileData($volunteer));
 
         return response()->json([
             'success' => true,
@@ -84,5 +152,30 @@ class VolunteerController extends Controller
             'success' => true,
             'message' => 'Volunteer deleted successfully'
         ]);
+    }
+
+    private function authenticatedVolunteer(Request $request): Volunteer
+    {
+        abort_unless($request->user()->role === 'volunteer', 403, 'Volunteer access only.');
+
+        return $request->user()->volunteer()->firstOrFail();
+    }
+
+    private function profileData(Volunteer $volunteer): array
+    {
+        $availabilityStatus = match (strtolower($volunteer->availability_status)) {
+            'available' => 'Available',
+            'busy' => 'Busy',
+            default => 'Offline',
+        };
+
+        return [
+            'id' => $volunteer->id,
+            'full_name' => $volunteer->full_name,
+            'email' => $volunteer->email,
+            'phone' => $volunteer->phone,
+            'availability_status' => $availabilityStatus,
+            'vehicle_type' => $volunteer->vehicle_type ?: 'None',
+        ];
     }
 }
