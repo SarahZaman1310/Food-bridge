@@ -38,4 +38,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(Donor::class);
     }
+
+    public function volunteer(): HasOne
+    {
+        return $this->hasOne(Volunteer::class);
+    }
 }

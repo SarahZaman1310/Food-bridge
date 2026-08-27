@@ -4,6 +4,7 @@ import Home from "./pages/Home/Home";
 import Login from "./pages/Auth/Login";
 import Signup from "./pages/Auth/Signup";
 import DonationPage from "./pages/Donation/DonationPage";
+import VolunteerPage from "./pages/Volunteer/VolunteerPage";
 import ProtectedRoute from "./pages/Auth/ProtectedRoute";
 
 function App() {
@@ -21,6 +22,15 @@ function App() {
           element={
             <ProtectedRoute>
               <DonationPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/volunteer"
+          element={
+            <ProtectedRoute requiredRole="volunteer">
+              <VolunteerPage />
             </ProtectedRoute>
           }
         />

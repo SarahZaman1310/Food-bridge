@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Donor;
+use App\Models\Volunteer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
@@ -43,6 +44,17 @@ class AuthController extends Controller
                     'email' => $user->email,
                     'phone' => $user->phone,
                     'address' => null,
+                ]);
+            }
+
+            if ($validated['role'] === 'volunteer') {
+                Volunteer::create([
+                    'user_id' => $user->id,
+                    'full_name' => $user->name,
+                    'email' => $user->email,
+                    'phone' => $user->phone,
+                    'availability_status' => 'Offline',
+                    'vehicle_type' => 'None',
                 ]);
             }
 

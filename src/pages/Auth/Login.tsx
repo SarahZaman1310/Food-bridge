@@ -42,8 +42,8 @@ function Login() {
       // Save user information
       localStorage.setItem("user", JSON.stringify(data.user));
 
-      // Go to donor page
-      navigate("/donate");
+      // Go to the dashboard for the authenticated role
+      navigate(data.user.role === "volunteer" ? "/volunteer" : "/donate");
     } catch (error) {
       console.error("Login error:", error);
       setError("Cannot connect to backend. Make sure Laravel is running.");
