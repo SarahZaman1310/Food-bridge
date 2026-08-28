@@ -72,11 +72,13 @@ function Signup() {
       // Save selected role for frontend use
       localStorage.setItem("user_role", role);
 
-      if (data.user.role === "volunteer") {
-        navigate("/volunteer", { replace: true });
-      } else {
-        navigate("/donor");
-      }
+    if (data.user.role === "volunteer") {
+  navigate("/volunteer", { replace: true });
+} else if (data.user.role === "ngo") {
+  navigate("/ngo", { replace: true });
+} else {
+  navigate("/donate", { replace: true });
+}  
     } catch (error) {
       console.error("Signup error:", error);
       setError(

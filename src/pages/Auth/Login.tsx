@@ -43,7 +43,13 @@ function Login() {
       localStorage.setItem("user", JSON.stringify(data.user));
 
       // Go to the dashboard for the authenticated role
-      navigate(data.user.role === "volunteer" ? "/volunteer" : "/donate");
+      if (data.user.role === "volunteer") {
+        navigate("/volunteer");
+      } else if (data.user.role === "ngo") {
+        navigate("/ngo");
+      } else {
+        navigate("/donate");
+      }
     } catch (error) {
       console.error("Login error:", error);
       setError("Cannot connect to backend. Make sure Laravel is running.");

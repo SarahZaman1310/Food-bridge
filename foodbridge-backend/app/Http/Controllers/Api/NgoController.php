@@ -4,10 +4,16 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Ngo;
+use App\Models\FoodDonation;
+use App\Models\FoodRequest;
 use Illuminate\Http\Request;
 
 class NgoController extends Controller
 {
+    /*
+    | NGO CRUD
+    */
+
     // GET: /api/ngos
     public function index()
     {
@@ -16,9 +22,10 @@ class NgoController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'NGOs retrieved successfully',
-            'data' => $ngos
+            'data' => $ngos,
         ]);
     }
+
 
     // POST: /api/ngos
     public function store(Request $request)
@@ -37,9 +44,10 @@ class NgoController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'NGO created successfully',
-            'data' => $ngo
+            'data' => $ngo,
         ], 201);
     }
+
 
     // GET: /api/ngos/{id}
     public function show(string $id)
@@ -48,9 +56,10 @@ class NgoController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $ngo
+            'data' => $ngo,
         ]);
     }
+
 
     // PUT/PATCH: /api/ngos/{id}
     public function update(Request $request, string $id)
@@ -58,9 +67,15 @@ class NgoController extends Controller
         $ngo = Ngo::findOrFail($id);
 
         $validated = $request->validate([
-            'ngo_name' => 'sometimes|required|string|max:255|unique:ngos,ngo_name,' . $ngo->id,
-            'registration_no' => 'sometimes|required|string|max:255|unique:ngos,registration_no,' . $ngo->id,
-            'email' => 'sometimes|required|email|unique:ngos,email,' . $ngo->id,
+            'ngo_name' =>
+                'sometimes|required|string|max:255|unique:ngos,ngo_name,' . $ngo->id,
+
+            'registration_no' =>
+                'sometimes|required|string|max:255|unique:ngos,registration_no,' . $ngo->id,
+
+            'email' =>
+                'sometimes|required|email|unique:ngos,email,' . $ngo->id,
+
             'phone' => 'sometimes|required|string|max:30',
             'address' => 'nullable|string',
             'is_verified' => 'sometimes|boolean',
@@ -71,19 +86,296 @@ class NgoController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'NGO updated successfully',
-            'data' => $ngo
+            'data' => $ngo,
         ]);
     }
+
 
     // DELETE: /api/ngos/{id}
     public function destroy(string $id)
     {
         $ngo = Ngo::findOrFail($id);
+
         $ngo->delete();
 
         return response()->json([
             'success' => true,
-            'message' => 'NGO deleted successfully'
+            'message' => 'NGO deleted successfully',
         ]);
+    }
+
+
+    /*
+     Logged-in NGO Profile
+    */
+
+    // GET: /api/ngo/profile
+    public function profile(Request $request)
+    {
+        $user = $request->user();
+
+        if (!$user || $user->role !== 'ngo') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Only NGO users can access this page.',
+            ], 403);
+        }
+
+        $ngo = Ngo::where('email', $user->email)->first();
+
+        if (!$ngo) {
+            return response()->json([
+                'success' => false,
+                'message' => 'NGO profile not found.',
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'NGO profile retrieved successfully',
+            'data' => $ngo,
+        ]);
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Available Food Donations
+    |--------------------------------------------------------------------------
+    */
+
+    // GET: /api/ngo/available-donations
+    public function availableDonations(Request $request)
+    {
+        $user = $request->user();
+
+        if (!$user || $user->role !== 'ngo') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Only NGO users can view available donations.',
+            ], 403);
+        }
+
+        $ngo = Ngo::where('email', $user->email)->first();
+
+        if (!$ngo) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Please complete your NGO profile first.',
+            ], 404);
+        }
+
+        $donations = FoodDonation::with('donor')
+            ->withSum(
+                [
+                    'foodRequests as reserved_qty' => function ($query) {
+                        $query->whereIn(
+                            'request_status',
+                            ['pending', 'approved']
+                        );
+                    },
+                ],
+                'requested_qty'
+            )
+            ->where('availability_status', 'available')
+            ->where('donation_status', 'active')
+            ->where('expiry_at', '>', now())
+            ->orderBy('expiry_at')
+            ->get()
+            ->map(function ($donation) {
+                $reservedQuantity =
+                    (float) ($donation->reserved_qty ?? 0);
+
+                $remainingQuantity = max(
+                    0,
+                    (float) $donation->quantity - $reservedQuantity
+                );
+
+                $donation->setAttribute(
+                    'remaining_qty',
+                    $remainingQuantity
+                );
+
+                return $donation;
+            })
+            ->filter(function ($donation) {
+                return $donation->remaining_qty > 0;
+            })
+            ->values();
+
+        return response()->json([
+            'success' => true,
+            'message' =>
+                'Available food donations retrieved successfully',
+            'data' => $donations,
+        ]);
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | NGO Food Requests
+    |--------------------------------------------------------------------------
+    */
+
+    // GET: /api/ngo/requests
+    public function myRequests(Request $request)
+    {
+        $user = $request->user();
+
+        if (!$user || $user->role !== 'ngo') {
+            return response()->json([
+                'success' => false,
+                'message' =>
+                    'Only NGO users can view food requests.',
+            ], 403);
+        }
+
+        $ngo = Ngo::where('email', $user->email)->first();
+
+        if (!$ngo) {
+            return response()->json([
+                'success' => false,
+                'message' => 'NGO profile not found.',
+            ], 404);
+        }
+
+        $foodRequests = FoodRequest::with([
+            'donation.donor',
+        ])
+            ->where('ngo_id', $ngo->id)
+            ->latest('requested_at')
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'message' =>
+                'Your food requests retrieved successfully',
+            'data' => $foodRequests,
+        ]);
+    }
+
+
+    // POST: /api/ngo/requests
+    public function requestFood(Request $request)
+    {
+        $user = $request->user();
+
+        if (!$user || $user->role !== 'ngo') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Only NGO users can request food.',
+            ], 403);
+        }
+
+        $ngo = Ngo::where('email', $user->email)->first();
+
+        if (!$ngo) {
+            return response()->json([
+                'success' => false,
+                'message' =>
+                    'Please complete your NGO profile first.',
+            ], 404);
+        }
+
+        $validated = $request->validate([
+            'donation_id' =>
+                'required|exists:food_donations,id',
+
+            'requested_qty' =>
+                'required|numeric|min:0.01',
+        ]);
+
+        $donation = FoodDonation::where(
+            'id',
+            $validated['donation_id']
+        )
+            ->where('availability_status', 'available')
+            ->where('donation_status', 'active')
+            ->where('expiry_at', '>', now())
+            ->first();
+
+        if (!$donation) {
+            return response()->json([
+                'success' => false,
+                'message' =>
+                    'This donation is no longer available.',
+            ], 422);
+        }
+
+        /*
+         * Prevent the same NGO from creating another active
+         * request for the same donation.
+         */
+        $alreadyRequested = FoodRequest::where(
+            'ngo_id',
+            $ngo->id
+        )
+            ->where('donation_id', $donation->id)
+            ->whereIn(
+                'request_status',
+                ['pending', 'approved']
+            )
+            ->exists();
+
+        if ($alreadyRequested) {
+            return response()->json([
+                'success' => false,
+                'message' =>
+                    'You already have an active request for this donation.',
+            ], 422);
+        }
+
+        /*
+         * Calculate how much food is still available.
+         */
+        $reservedQuantity = FoodRequest::where(
+            'donation_id',
+            $donation->id
+        )
+            ->whereIn(
+                'request_status',
+                ['pending', 'approved']
+            )
+            ->sum('requested_qty');
+
+        $remainingQuantity = max(
+            0,
+            (float) $donation->quantity -
+                (float) $reservedQuantity
+        );
+
+        if (
+            (float) $validated['requested_qty'] >
+            $remainingQuantity
+        ) {
+            return response()->json([
+                'success' => false,
+                'message' =>
+                    'Requested quantity is greater than the available quantity.',
+                'remaining_qty' => $remainingQuantity,
+            ], 422);
+        }
+
+        /*
+         * NGO ID and request status are assigned by backend.
+         * NGO user does not control these values.
+         */
+        $foodRequest = FoodRequest::create([
+            'ngo_id' => $ngo->id,
+            'donation_id' => $donation->id,
+            'requested_qty' =>
+                $validated['requested_qty'],
+            'requested_at' => now(),
+            'request_status' => 'pending',
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' =>
+                'Food request submitted successfully',
+            'data' =>
+                $foodRequest->load('donation.donor'),
+        ], 201);
     }
 }

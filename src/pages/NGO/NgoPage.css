@@ -1,0 +1,499 @@
+* {
+  box-sizing: border-box;
+}
+
+.ngo-page {
+  min-height: 100vh;
+  background: #f4f8f5;
+  color: #1f2d25;
+}
+
+.ngo-header {
+  background: #ffffff;
+  border-bottom: 1px solid #dfe9e2;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.ngo-header-inner {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.ngo-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: #173f35;
+}
+
+.ngo-logo {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: #e3f2e8;
+  font-size: 24px;
+}
+
+.ngo-brand strong {
+  display: block;
+  font-size: 20px;
+}
+
+.ngo-brand small {
+  display: block;
+  margin-top: 2px;
+  color: #718078;
+  font-size: 12px;
+}
+
+.ngo-logout,
+.ngo-refresh-button {
+  border: 1px solid #cedbd2;
+  background: #ffffff;
+  color: #173f35;
+  border-radius: 10px;
+  padding: 10px 17px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.ngo-logout:hover,
+.ngo-refresh-button:hover {
+  background: #edf6f0;
+}
+
+.ngo-logout:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.ngo-main {
+  width: min(1180px, calc(100% - 40px));
+  margin: 0 auto;
+  padding: 42px 0 70px;
+}
+
+.ngo-hero {
+  padding: 36px;
+  border-radius: 22px;
+  background: #173f35;
+  color: #ffffff;
+  margin-bottom: 24px;
+}
+
+.ngo-kicker {
+  margin: 0 0 8px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: #6fa77d;
+}
+
+.ngo-hero .ngo-kicker {
+  color: #b8dfc2;
+}
+
+.ngo-hero h1 {
+  margin: 0;
+  font-size: clamp(30px, 5vw, 46px);
+  line-height: 1.1;
+}
+
+.ngo-hero > p:last-child {
+  max-width: 720px;
+  margin: 15px 0 0;
+  line-height: 1.7;
+  color: #dce9e1;
+}
+
+.ngo-error,
+.ngo-success {
+  padding: 14px 18px;
+  border-radius: 10px;
+  margin-bottom: 18px;
+  font-weight: 600;
+}
+
+.ngo-error {
+  background: #fff0f0;
+  border: 1px solid #efcaca;
+  color: #a33232;
+}
+
+.ngo-success {
+  background: #ecf8ef;
+  border: 1px solid #bedfc7;
+  color: #276b3a;
+}
+
+.ngo-profile-summary {
+  background: #ffffff;
+  border: 1px solid #e0e9e2;
+  border-radius: 18px;
+  padding: 24px;
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 25px;
+}
+
+.ngo-profile-summary h2 {
+  margin: 0 0 12px;
+  font-size: 24px;
+  color: #173f35;
+}
+
+.ngo-profile-summary p {
+  margin: 6px 0;
+  color: #66746c;
+}
+
+.ngo-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 13px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.ngo-status-verified {
+  background: #e2f5e8;
+  color: #26713d;
+}
+
+.ngo-status-pending {
+  background: #fff4d8;
+  color: #966a13;
+}
+
+.ngo-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin-bottom: 28px;
+}
+
+.ngo-stat-card {
+  background: #ffffff;
+  border: 1px solid #e0e9e2;
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.ngo-stat-card strong {
+  display: block;
+  color: #173f35;
+  font-size: 32px;
+  margin-bottom: 6px;
+}
+
+.ngo-stat-card span {
+  color: #728078;
+  font-size: 14px;
+}
+
+.ngo-dashboard-section {
+  background: #ffffff;
+  border: 1px solid #e0e9e2;
+  border-radius: 18px;
+  padding: 26px;
+  margin-bottom: 26px;
+}
+
+.ngo-section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 22px;
+}
+
+.ngo-section-heading h2 {
+  margin: 0;
+  color: #173f35;
+  font-size: 25px;
+}
+
+.ngo-donation-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.ngo-donation-card {
+  border: 1px solid #dfe8e1;
+  border-radius: 16px;
+  padding: 20px;
+  background: #fbfdfb;
+}
+
+.ngo-donation-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.ngo-food-category {
+  background: #edf4ef;
+  color: #456451;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.ngo-available-badge {
+  color: #27743e;
+  background: #e5f6e9;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.ngo-donation-card h3 {
+  margin: 0 0 14px;
+  color: #173f35;
+  font-size: 21px;
+}
+
+.ngo-donation-details {
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e6ece8;
+}
+
+.ngo-donation-details p {
+  margin: 7px 0;
+  color: #65736b;
+  font-size: 14px;
+}
+
+.ngo-request-box {
+  margin-top: 16px;
+}
+
+.ngo-request-box label {
+  display: block;
+  margin-bottom: 7px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #405449;
+}
+
+.ngo-request-box input {
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid #cfdad2;
+  border-radius: 9px;
+  outline: none;
+  font-size: 14px;
+  margin-bottom: 10px;
+  background: #ffffff;
+}
+
+.ngo-request-box input:focus {
+  border-color: #4c8261;
+  box-shadow: 0 0 0 3px rgba(76, 130, 97, 0.12);
+}
+
+.ngo-primary-button {
+  width: 100%;
+  border: 0;
+  border-radius: 9px;
+  padding: 11px 15px;
+  background: #173f35;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.ngo-primary-button:hover {
+  background: #205648;
+}
+
+.ngo-primary-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.ngo-requested-note {
+  margin-top: 16px;
+  padding: 12px;
+  border-radius: 9px;
+  background: #fff6dd;
+  color: #8b691d;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.ngo-request-list {
+  display: grid;
+  gap: 14px;
+}
+
+.ngo-request-card {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  align-items: center;
+  padding: 18px;
+  border: 1px solid #e0e9e2;
+  border-radius: 13px;
+  background: #fbfdfb;
+}
+
+.ngo-request-card h3 {
+  margin: 0 0 8px;
+  color: #173f35;
+}
+
+.ngo-request-card p {
+  margin: 5px 0;
+  color: #6b776f;
+  font-size: 14px;
+}
+
+.ngo-request-status {
+  display: inline-flex;
+  padding: 7px 12px;
+  border-radius: 999px;
+  text-transform: capitalize;
+  font-size: 12px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.ngo-request-status-pending {
+  background: #fff4d8;
+  color: #936711;
+}
+
+.ngo-request-status-approved {
+  background: #e1f4e7;
+  color: #26703c;
+}
+
+.ngo-request-status-rejected {
+  background: #fde8e8;
+  color: #a23d3d;
+}
+
+.ngo-empty {
+  padding: 42px 20px;
+  text-align: center;
+  border: 1px dashed #cbd9ce;
+  border-radius: 13px;
+  background: #fafcfb;
+}
+
+.ngo-empty h3 {
+  margin: 0 0 8px;
+  color: #173f35;
+}
+
+.ngo-empty p {
+  margin: 0;
+  color: #758078;
+}
+
+.ngo-state {
+  min-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 30px;
+}
+
+.ngo-state h2 {
+  color: #173f35;
+  margin-bottom: 5px;
+}
+
+.ngo-state p {
+  color: #718078;
+}
+
+.ngo-spinner {
+  width: 38px;
+  height: 38px;
+  border: 4px solid #dce8df;
+  border-top-color: #173f35;
+  border-radius: 50%;
+  animation: ngo-spin 0.8s linear infinite;
+}
+
+@keyframes ngo-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 800px) {
+  .ngo-main {
+    width: min(100% - 24px, 1180px);
+    padding-top: 24px;
+  }
+
+  .ngo-hero {
+    padding: 26px 22px;
+  }
+
+  .ngo-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .ngo-donation-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ngo-profile-summary {
+    flex-direction: column;
+  }
+
+  .ngo-section-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .ngo-request-card {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 520px) {
+  .ngo-header-inner {
+    padding: 13px 15px;
+  }
+
+  .ngo-brand small {
+    display: none;
+  }
+
+  .ngo-dashboard-section {
+    padding: 18px;
+  }
+
+  .ngo-header .ngo-logout {
+    padding: 8px 12px;
+  }
+}
