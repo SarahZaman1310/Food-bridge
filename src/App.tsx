@@ -6,6 +6,7 @@ import Signup from "./pages/Auth/Signup";
 import DonationPage from "./pages/Donation/DonationPage";
 import VolunteerPage from "./pages/Volunteer/VolunteerPage";
 import ProtectedRoute from "./pages/Auth/ProtectedRoute";
+import NgoPage from "./pages/NGO/NgoPage";
 
 function App() {
   return (
@@ -16,7 +17,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
 
-        {/* Protected donor page */}
+        {/* Donor page */}
         <Route
           path="/donate"
           element={
@@ -26,11 +27,22 @@ function App() {
           }
         />
 
+        {/* Volunteer page */}
         <Route
           path="/volunteer"
           element={
             <ProtectedRoute requiredRole="volunteer">
               <VolunteerPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* NGO Dashboard */}
+        <Route
+          path="/ngo"
+          element={
+            <ProtectedRoute requiredRole="ngo">
+              <NgoPage />
             </ProtectedRoute>
           }
         />

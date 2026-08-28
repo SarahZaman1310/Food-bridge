@@ -41,5 +41,21 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('recipients', RecipientController::class);
     Route::apiResource('delivery-updates', DeliveryUpdateController::class);
     Route::apiResource('feedback', FeedbackController::class);
+    Route::get('/ngo/profile', [NgoController::class, 'profile']);
+
+Route::get(
+    '/ngo/available-donations',
+    [NgoController::class, 'availableDonations']
+);
+
+Route::get(
+    '/ngo/requests',
+    [NgoController::class, 'myRequests']
+);
+
+Route::post(
+    '/ngo/requests',
+    [NgoController::class, 'requestFood']
+);
 
 });
