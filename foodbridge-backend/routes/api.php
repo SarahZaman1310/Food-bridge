@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\VolunteerController;
 use App\Http\Controllers\Api\FoodRequestController;
 use App\Http\Controllers\Api\DeliveryController;
 use App\Http\Controllers\Api\RecipientController;
+use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\DeliveryUpdateController;
 use App\Http\Controllers\Api\FeedbackController;
 
@@ -28,10 +29,19 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/logout', [AuthController::class, 'logout']);
 
+    // Admin
+    Route::get('/admin/dashboard', [AdminController::class, 'dashboard']);
+
+    Route::put('/admin/ngos/{id}/verify', [AdminController::class, 'verifyNgo']);
+
+    Route::put('/admin/ngos/{id}/unverify', [AdminController::class, 'unverifyNgo']);
+
+    // Volunteer
     Route::get('/volunteer/profile', [VolunteerController::class, 'profile']);
     Route::put('/volunteer/profile', [VolunteerController::class, 'updateProfile']);
     Route::get('/volunteer/deliveries', [VolunteerController::class, 'assignedDeliveries']);
 
+    // Resources
     Route::apiResource('donors', DonorController::class);
     Route::apiResource('food-donations', FoodDonationController::class);
     Route::apiResource('ngos', NgoController::class);
@@ -41,21 +51,23 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('recipients', RecipientController::class);
     Route::apiResource('delivery-updates', DeliveryUpdateController::class);
     Route::apiResource('feedback', FeedbackController::class);
+
+    // NGO
     Route::get('/ngo/profile', [NgoController::class, 'profile']);
 
-Route::get(
-    '/ngo/available-donations',
-    [NgoController::class, 'availableDonations']
-);
+    Route::get(
+        '/ngo/available-donations',
+        [NgoController::class, 'availableDonations']
+    );
 
-Route::get(
-    '/ngo/requests',
-    [NgoController::class, 'myRequests']
-);
+    Route::get(
+        '/ngo/requests',
+        [NgoController::class, 'myRequests']
+    );
 
-Route::post(
-    '/ngo/requests',
-    [NgoController::class, 'requestFood']
-);
+    Route::post(
+        '/ngo/requests',
+        [NgoController::class, 'requestFood']
+    );
 
 });

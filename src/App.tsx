@@ -7,6 +7,7 @@ import DonationPage from "./pages/Donation/DonationPage";
 import VolunteerPage from "./pages/Volunteer/VolunteerPage";
 import ProtectedRoute from "./pages/Auth/ProtectedRoute";
 import NgoPage from "./pages/NGO/NgoPage";
+import Admin from "./pages/Admin/Admin";
 
 function App() {
   return (
@@ -46,6 +47,14 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+  path="/admin"
+  element={
+    <ProtectedRoute requiredRole="admin">
+      <Admin />
+    </ProtectedRoute>
+  }
+/>
       </Routes>
     </BrowserRouter>
   );
