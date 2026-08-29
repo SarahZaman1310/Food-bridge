@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Donor;
 use App\Models\Volunteer;
+use App\Models\Ngo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
@@ -57,6 +58,16 @@ class AuthController extends Controller
                     'vehicle_type' => 'None',
                 ]);
             }
+            if ($validated['role'] === 'ngo') {
+    Ngo::create([
+        'ngo_name' => $user->name,
+        'registration_no' => 'NGO-' . str_pad($user->id, 6, '0', STR_PAD_LEFT),
+        'email' => $user->email,
+        'phone' => $user->phone,
+        'address' => null,
+        'is_verified' => false,
+    ]);
+}
 
             $token = $user->createToken('auth_token')->plainTextToken;
 
