@@ -398,30 +398,74 @@
   line-height: 1.5;
   word-break: break-word;
 }
-
 .donation-page .card-footer {
   margin-top: 18px;
   padding-top: 16px;
   border-top: 1px solid rgba(223, 233, 224, 0.9);
+
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  align-items: stretch;
 }
 
-.donation-page .delete-button {
+/* Edit + Delete buttons */
+.donation-page .card-footer .button,
+.donation-page .card-footer .delete-button {
   width: 100%;
-  border: 1px solid rgba(170, 46, 46, 0.25);
-  background: rgba(255, 245, 245, 0.9);
-  color: #8f2c2c;
+  min-height: 44px;
+  padding: 0 14px;
   border-radius: 12px;
-  padding: 10px 14px;
-  font-size: 0.82rem;
+  font-size: 0.85rem;
   font-weight: 800;
   cursor: pointer;
-  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+  box-sizing: border-box;
 }
 
-.donation-page .delete-button:hover {
-  background: rgba(255, 232, 232, 0.95);
-  border-color: rgba(170, 46, 46, 0.45);
+/* Edit button */
+.donation-page .card-footer .button {
+  border: 1px solid var(--green);
+  background: var(--green);
+  color: #fff;
+  box-shadow: none;
+}
+
+.donation-page .card-footer .button:hover {
+  background: var(--green-dark);
+  border-color: var(--green-dark);
   transform: translateY(-1px);
+}
+
+/* Delete button — SAME COLOR as Edit */
+.donation-page .card-footer .delete-button {
+  border: 1px solid var(--green);
+  background: var(--green);
+  color: #fff;
+}
+
+.donation-page .submit-row .delete-button {
+  width: auto;
+  min-height: 52px;
+  padding: 0 23px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--green-soft);
+  color: var(--green-dark);
+  font-size: 15px;
+  font-weight: 750;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.donation-page .submit-row .delete-button:hover {
+  background: #dff2e7;
+  border-color: var(--green);
+  color: var(--green-dark);
+  transform: translateY(-2px);
 }
 
 @media (max-width: 980px) {
@@ -493,3 +537,10 @@
     grid-template-columns: 1fr;
   }
 }
+.donation-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.donation-page .logout-button { border: 1px solid var(--green); border-radius: 10px; padding: 10px 20px; background: var(--green); color: #ffffff; font-size: 14px; font-weight: 700; cursor: pointer; transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease; } .donation-page .logout-button:hover { background: var(--green-dark); border-color: var(--green-dark); transform: translateY(-1px); box-shadow: 0 7px 18px rgba(22, 131, 75, 0.18); } .donation-page .logout-button:active { transform: translateY(0); }
